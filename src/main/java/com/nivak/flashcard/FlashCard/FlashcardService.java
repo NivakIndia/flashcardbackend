@@ -52,12 +52,46 @@ public class FlashcardService{
         repository.save(user);
     }
 
-    public void deletFlashcard(String token ,int cardId){
+    public void deleteFlashcard(String token, int cardId) {
         FlashcardUser user = repository.findByUserName(deCodePassword(token));
         List<Flashcard> allFlashcards = user.getFlashcards();
-        allFlashcards.remove(cardId-1);
-        user.setFlashcards(allFlashcards);
-        repository.save(user);
+    
+        Flashcard flashcardToRemove = allFlashcards.stream()
+            .filter(flashcard -> flashcard.getCardId() == cardId)
+            .findFirst()
+            .orElse(null);
+    
+        if (flashcardToRemove != null) {
+            allFlashcards.remove(flashcardToRemove);
+            user.setFlashcards(allFlashcards);
+            repository.save(user);
+        } else {
+            throw new IllegalArgumentException("Flashcard with id " + cardId + " not found");
+        }
     }
+    
+
+    public void updateFlashcard(Flashcard card, String token) {
+        FlashcardUser user = repository.findByUserName(deCodePassword(token));
+        List<Flashcard> allFlashcards = user.getFlashcards();
+    
+        Flashcard flashcardToUpdate = allFlashcards.stream()
+            .filter(flashcard -> flashcard.getCardId() == card.getCardId())
+            .findFirst()
+            .orElse(null);
+    
+        if (flashcardToUpdate != null) {
+            flashcardToUpdate.setAnswer(card.getAnswer());
+            flashcardToUpdate.setCategory(card.getCategory());
+            flashcardToUpdate.setCode(card.getCode());
+            flashcardToUpdate.setLanguage(card.getLanguage());
+    
+            user.setFlashcards(allFlashcards);
+            repository.save(user);
+        } else {
+            throw new IllegalArgumentException("Flashcard with id " + card.getCardId() + " not found");
+        }
+    }
+    
 }
 

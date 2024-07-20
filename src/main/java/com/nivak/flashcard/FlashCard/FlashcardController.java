@@ -86,11 +86,24 @@ public class FlashcardController {
     @PostMapping("/deletecard/")
     public ResponseEntity<ApiResponse<List<Flashcard>>> deletFlashcard(@RequestParam("token") String token, @RequestParam("cardId") int cardId) {
         try {
-            service.deletFlashcard(token , cardId); 
+            service.deleteFlashcard(token , cardId); 
             ApiResponse<List<Flashcard>> response = new ApiResponse<>(true, "Flashcards deleted successfully", null);
             return ResponseEntity.ok(response); 
         } catch (Exception e) {
             ApiResponse<List<Flashcard>> response = new ApiResponse<>(false, "Error in deleting flashcards", null);
+            return ResponseEntity.badRequest().body(response);
+        }
+    }
+
+
+    @PostMapping("/updatecard/")
+    public ResponseEntity<ApiResponse<List<Flashcard>>> updateFlashcard(@RequestBody Flashcard flashcard, @RequestParam("token") String token) {
+        try {
+            service.updateFlashcard(flashcard,token); 
+            ApiResponse<List<Flashcard>> response = new ApiResponse<>(true, "Flashcards Updated successfully", null);
+            return ResponseEntity.ok(response); 
+        } catch (Exception e) {
+            ApiResponse<List<Flashcard>> response = new ApiResponse<>(false, "Error in Updating flashcards", null);
             return ResponseEntity.badRequest().body(response);
         }
     }

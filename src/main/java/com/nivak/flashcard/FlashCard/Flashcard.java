@@ -13,6 +13,7 @@ public class Flashcard {
     private int cardId;
     private String question;
     private String answer;
+    private String category;
     private boolean code;
     private String language;
 
