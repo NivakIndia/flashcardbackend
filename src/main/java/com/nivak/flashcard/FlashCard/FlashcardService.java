@@ -35,6 +35,11 @@ public class FlashcardService{
         return user.getFlashcards();
     }
 
+    public List<String> fetchCategory(String token){
+        FlashcardUser user = repository.findByUserName(deCodePassword(token));
+        return user.getCategory();
+    }
+
     public String enCodePassword(String str){
         return Base64.getEncoder().encodeToString(str.getBytes());
     }
@@ -45,10 +50,15 @@ public class FlashcardService{
 
     public void saveFlashcard(Flashcard flashcard, String token) {
         FlashcardUser user = repository.findByUserName(deCodePassword(token));
+        List<String> newCategory = user.getCategory();
+        if(!newCategory.contains(flashcard.getCategory())) newCategory.add(flashcard.getCategory());
+
         List<Flashcard> allFlashcards = user.getFlashcards();
         flashcard.setCardId(allFlashcards.size()+1);
         allFlashcards.add(flashcard);
+
         user.setFlashcards(allFlashcards);
+        user.setCategory(newCategory);
         repository.save(user);
     }
 
@@ -85,8 +95,12 @@ public class FlashcardService{
             flashcardToUpdate.setCategory(card.getCategory());
             flashcardToUpdate.setCode(card.getCode());
             flashcardToUpdate.setLanguage(card.getLanguage());
+
+            List<String> newCategory = user.getCategory();
+            if(!newCategory.contains(flashcardToUpdate.getCategory())) newCategory.add(flashcardToUpdate.getCategory());
     
             user.setFlashcards(allFlashcards);
+            user.setCategory(newCategory);
             repository.save(user);
         } else {
             throw new IllegalArgumentException("Flashcard with id " + card.getCardId() + " not found");

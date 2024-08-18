@@ -19,5 +19,6 @@ public class FlashcardUser {
     private ObjectId id;
     private String userName;
     private String password;
+    private List<String> category;
     private List<Flashcard> flashcards;
 }

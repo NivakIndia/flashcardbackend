@@ -71,6 +71,18 @@ public class FlashcardController {
         }
     }
 
+    @PostMapping("/getusercategory/")
+    public ResponseEntity<ApiResponse<List<String>>> getUserCategory(@RequestParam("token") String token) {
+        try {
+            List<String> category = service.fetchCategory(token);
+            ApiResponse<List<String>> response = new ApiResponse<>(true, "Flashcards fetched successfully", category);
+            return ResponseEntity.ok(response); 
+        } catch (Exception e) {
+            ApiResponse<List<String>> response = new ApiResponse<>(false, "Error in fetching flashcards", null);
+            return ResponseEntity.badRequest().body(response);
+        }
+    }
+
     @PostMapping("/addcard/")
     public ResponseEntity<ApiResponse<List<Flashcard>>> createFlashcard(@RequestBody Flashcard flashcard, @RequestParam("token") String token) {
         try {
