@@ -39,23 +39,60 @@ public class FlashcardController {
     }
 
     @PostMapping("/auth/login/")
-    public ResponseEntity<ApiResponse<FlashcardUser>> loginUser(@RequestBody FlashcardUser user) {
+    public ResponseEntity<ApiResponse<String>> loginUser(@RequestBody FlashcardUser user) {
         try {
             FlashcardUser currUser = service.login(user.getUserName(), user.getPassword());
             if(currUser == null){
-                response = new ApiResponse<FlashcardUser>(false, "Invalid Credentials", null);
+                ApiResponse<String> response = new ApiResponse<String>(false, "Invalid Credentials", null);
                 return ResponseEntity.ok(response);
             }
 
             String token = service.enCodePassword(currUser.getUserName());
 
-            response = new ApiResponse<FlashcardUser>(true, token, null);
+            ApiResponse<String> response = new ApiResponse<String>(true, token, currUser.getPassword());
             return ResponseEntity.ok(response);
         } catch (Exception e) {
-            response = new ApiResponse<FlashcardUser>(false, "Registration Failed", null);
+            ApiResponse<String> response = new ApiResponse<String>(false, "Login Failed", null);
             return ResponseEntity.badRequest().body(response);
         }
     }
+
+    @PostMapping("/auth/loginnoauth/")
+    public ResponseEntity<ApiResponse<String>> loginUserWithoutAuth(@RequestBody FlashcardUser user) {
+        try {
+            FlashcardUser currUser = service.loginwithoutAuth(user.getUserName());
+            if(currUser == null){
+                ApiResponse<String> response = new ApiResponse<String>(false, "Invalid Credentials", "null");
+                return ResponseEntity.ok(response);
+            }
+
+            String token = service.enCodePassword(currUser.getUserName());
+
+            ApiResponse<String> response = new ApiResponse<String>(true, token, null);
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            ApiResponse<String> response = new ApiResponse<String>(false, "Login Failed", null);
+            return ResponseEntity.badRequest().body(response);
+        }
+    }
+
+    @PostMapping("/auth/isadmin/")
+    public ResponseEntity<ApiResponse<String>> isAdmin(@RequestParam("token") String token, @RequestParam("password") String password) {
+        try {
+            FlashcardUser currUser = service.isadmin(token, password);
+            if(currUser == null){
+                ApiResponse<String> response = new ApiResponse<String>(false, "Invalid Credentials", "null");
+                return ResponseEntity.ok(response);
+            }
+
+            ApiResponse<String> response = new ApiResponse<String>(true, token, null);
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            ApiResponse<String> response = new ApiResponse<String>(false, "Login Failed", null);
+            return ResponseEntity.badRequest().body(response);
+        }
+    }
+    
     
     
 

@@ -30,6 +30,19 @@ public class FlashcardService{
         return null;
     }
 
+    public FlashcardUser isadmin(String userName, String password) {
+        FlashcardUser user = repository.findByUserName(deCodePassword(userName));
+        if (user != null && deCodePassword(password).equals(deCodePassword(user.getPassword()))) {
+            return user;
+        }
+        return null;
+    }
+
+    public FlashcardUser loginwithoutAuth(String userName) {
+        FlashcardUser user = repository.findByUserName(userName);
+        return user;
+    }
+
     public List<Flashcard> fetchCards(String token){
         FlashcardUser user = repository.findByUserName(deCodePassword(token));
         return user.getFlashcards();
